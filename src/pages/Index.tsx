@@ -8,7 +8,7 @@ const Index = () => {
   const [audioPlayed, setAudioPlayed] = useState(false);
   const navigate = useNavigate();
   const targetDate = new Date('2024-02-01T00:00:00');
-  const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+  const audio = new Audio('https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FLuke-Bergs-x-Lichu-Summer-Breeze(chosic.com).mp3?alt=media&token=279a40b5-7c95-466d-b3dc-8e66f5582ca5');
 
   useEffect(() => {
     const calculateTimeLeft = () => {
