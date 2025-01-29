@@ -28,6 +28,8 @@ const reactionMessages = [
   "Amit sent love! ❤️"
 ];
 
+const names = ["Sumit", "Priya", "Rahul", "Neha", "Amit", "Riya", "Karan", "Meera"];
+
 const Celebrate = () => {
   const [reactions, setReactions] = useState(100);
   const [views, setViews] = useState(200);
@@ -104,18 +106,18 @@ const Celebrate = () => {
       });
     }, 30000);
 
-    // Update reactions every 3 minutes
+    // Add random reactions every 3 seconds
     const reactionInterval = setInterval(() => {
+      const randomName = names[Math.floor(Math.random() * names.length)];
+      const newMessage = `${randomName} just sent birthday love! ❤️`;
+      setRecentReactions(prev => [newMessage, ...prev].slice(0, 5));
+      
       setReactions(prev => {
-        const newReactions = prev + 20;
+        const newReactions = prev + 1;
         localStorage.setItem('birthdayReactions', newReactions.toString());
         return newReactions;
       });
-      
-      // Add a random reaction message
-      const newMessage = reactionMessages[Math.floor(Math.random() * reactionMessages.length)];
-      setRecentReactions(prev => [newMessage, ...prev].slice(0, 5));
-    }, 180000);
+    }, 3000);
 
     // Load saved values
     const savedViews = localStorage.getItem('birthdayViews');
@@ -152,7 +154,7 @@ const Celebrate = () => {
             <CarouselContent>
               {processedPhotos.map((photo, index) => (
                 <CarouselItem key={index}>
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-xl">
                     <img
                       src={photo}
                       alt={`Celebration ${index + 1}`}
@@ -198,7 +200,7 @@ const Celebrate = () => {
         </div>
 
         <div className="message-container animate-fade-in backdrop-blur-sm bg-white/80 p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl md:text-3xl mb-4 text-primary font-dancing">
+          <h2 className="text-2xl md:text-3xl mb-4 text-primary">
             A Message from Sumit
           </h2>
           <p className="text-lg leading-relaxed text-gray-700">
