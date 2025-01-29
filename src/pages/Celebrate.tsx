@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 const photos = [
-  'https://source.unsplash.com/random/800x600?birthday,1',
-  'https://source.unsplash.com/random/800x600?celebration,1',
-  'https://source.unsplash.com/random/800x600?party,1',
-  'https://source.unsplash.com/random/800x600?cake,1',
-  'https://source.unsplash.com/random/800x600?gift,1',
-  'https://source.unsplash.com/random/800x600?balloons,1',
-  'https://source.unsplash.com/random/800x600?confetti,1',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7379.jpeg?alt=media&token=33c12fea-af79-4a99-842a-8ee8c580be01',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7380.jpeg?alt=media&token=8ded5656-19ad-4b6a-b4cc-ebf29418d3d8',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7830.jpeg?alt=media&token=ca31bd52-45cf-4af9-b5d3-62c8a8b7063e',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7831.jpeg?alt=media&token=7777b800-d8f9-4595-8fd2-62f8033fa22b',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7832.jpeg?alt=media&token=42a46cb4-7bbd-4918-afa6-acda96531070',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FWhatsApp%20Image%202025-01-29%20at%2011.42.49%20PM.jpeg?alt=media&token=47d059fe-6f92-4c4e-b0b7-c58c897b8156',
+  'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FWhatsApp%20Image%202025-01-29%20at%2011.42.48%20PM.jpeg?alt=media&token=5508c3d6-cd30-433e-9741-5cbdefb74ce1',
 ];
 
 const Celebrate = () => {
