@@ -1,12 +1,95 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 
 const Index = () => {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+  const [showCelebrate, setShowCelebrate] = useState(false);
+  const [audioPlayed, setAudioPlayed] = useState(false);
+  const navigate = useNavigate();
+  const targetDate = new Date('2024-02-01T00:00:00');
+  const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const difference = targetDate.getTime() - now.getTime();
+      
+      if (difference <= 0) {
+        setShowCelebrate(true);
+        setTimeLeft('');
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!audioPlayed) {
+      const playAudio = async () => {
+        try {
+          await audio.play();
+          setAudioPlayed(true);
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        } catch (error) {
+          console.error('Audio playback failed:', error);
+        }
+      };
+
+      const handleInteraction = () => {
+        playAudio();
+        document.removeEventListener('click', handleInteraction);
+      };
+
+      document.addEventListener('click', handleInteraction);
+      return () => document.removeEventListener('click', handleInteraction);
+    }
+  }, [audioPlayed]);
+
+  const handleCelebrate = () => {
+    navigate('/celebrate');
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="profile-circle">
+        <img
+          src="https://placekitten.com/200/200"
+          alt="Sukhman"
+          className="w-full h-full object-cover"
+        />
       </div>
+      
+      {!showCelebrate ? (
+        <div className="text-center">
+          <h1 className="text-4xl md:text-6xl mb-8 text-primary">
+            Sukhman's Birthday Countdown
+          </h1>
+          <div className="countdown-container">
+            {timeLeft}
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={handleCelebrate}
+          className="celebrate-button animate-bounce"
+        >
+          Click to Celebrate!
+        </button>
+      )}
     </div>
   );
 };
