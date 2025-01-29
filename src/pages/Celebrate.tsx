@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import * as faceapi from 'face-api.js';
+import { Heart } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -18,27 +20,123 @@ const photos = [
   'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FWhatsApp%20Image%202025-01-29%20at%2011.42.48%20PM.jpeg?alt=media&token=5508c3d6-cd30-433e-9741-5cbdefb74ce1',
 ];
 
+const reactionMessages = [
+  "Sumit just reacted! ❤️",
+  "Priya sent birthday love! ❤️",
+  "Rahul added a reaction! ❤️",
+  "Neha wishes you! ❤️",
+  "Amit sent love! ❤️"
+];
+
 const Celebrate = () => {
   const [reactions, setReactions] = useState(100);
   const [views, setViews] = useState(200);
+  const [recentReactions, setRecentReactions] = useState<string[]>([]);
+  const [processedPhotos, setProcessedPhotos] = useState<string[]>([]);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const reactionInterval = setInterval(() => {
-      setReactions((prev) => prev + 20);
-    }, 180000); // 3 minutes
+    const loadModels = async () => {
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+        await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+        processImages();
+      } catch (error) {
+        console.error('Error loading face detection models:', error);
+        setProcessedPhotos(photos); // Fallback to original photos if face detection fails
+      }
+    };
+    loadModels();
+  }, []);
 
+  const processImages = async () => {
+    const processed = await Promise.all(
+      photos.map(async (photo) => {
+        try {
+          const img = await faceapi.fetchImage(photo);
+          const detections = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions());
+          
+          if (detections) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const box = detections.box;
+            
+            // Make the crop area slightly larger than the face
+            const cropSize = Math.max(box.width, box.height) * 1.5;
+            const centerX = box.x + box.width / 2;
+            const centerY = box.y + box.height / 2;
+            
+            canvas.width = cropSize;
+            canvas.height = cropSize;
+            
+            if (ctx) {
+              ctx.drawImage(
+                img,
+                centerX - cropSize / 2,
+                centerY - cropSize / 2,
+                cropSize,
+                cropSize,
+                0,
+                0,
+                cropSize,
+                cropSize
+              );
+              return canvas.toDataURL();
+            }
+          }
+          return photo; // Return original if face detection fails
+        } catch (error) {
+          console.error('Error processing image:', error);
+          return photo; // Return original on error
+        }
+      })
+    );
+    setProcessedPhotos(processed);
+  };
+
+  useEffect(() => {
+    // Update views every 30 seconds
     const viewInterval = setInterval(() => {
-      setViews((prev) => prev + 20);
-    }, 120000); // 2 minutes
+      setViews(prev => {
+        const newViews = prev + 5;
+        localStorage.setItem('birthdayViews', newViews.toString());
+        return newViews;
+      });
+    }, 30000);
+
+    // Update reactions every 3 minutes
+    const reactionInterval = setInterval(() => {
+      setReactions(prev => {
+        const newReactions = prev + 20;
+        localStorage.setItem('birthdayReactions', newReactions.toString());
+        return newReactions;
+      });
+      
+      // Add a random reaction message
+      const newMessage = reactionMessages[Math.floor(Math.random() * reactionMessages.length)];
+      setRecentReactions(prev => [newMessage, ...prev].slice(0, 5));
+    }, 180000);
+
+    // Load saved values
+    const savedViews = localStorage.getItem('birthdayViews');
+    const savedReactions = localStorage.getItem('birthdayReactions');
+    if (savedViews) setViews(parseInt(savedViews));
+    if (savedReactions) setReactions(parseInt(savedReactions));
 
     return () => {
-      clearInterval(reactionInterval);
       clearInterval(viewInterval);
+      clearInterval(reactionInterval);
     };
   }, []);
 
   const handleReaction = () => {
-    setReactions((prev) => prev + 1);
+    setReactions(prev => {
+      const newReactions = prev + 1;
+      localStorage.setItem('birthdayReactions', newReactions.toString());
+      return newReactions;
+    });
+    const newMessage = "You reacted with love! ❤️";
+    setRecentReactions(prev => [newMessage, ...prev].slice(0, 5));
     toast('Thanks for reacting! 🎉');
   };
 
@@ -50,9 +148,9 @@ const Celebrate = () => {
         </h1>
 
         <div className="mb-12">
-          <Carousel className="w-full max-w-4xl mx-auto">
+          <Carousel className="w-full max-w-4xl mx-auto" ref={carouselRef}>
             <CarouselContent>
-              {photos.map((photo, index) => (
+              {processedPhotos.map((photo, index) => (
                 <CarouselItem key={index}>
                   <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
                     <img
@@ -82,12 +180,24 @@ const Celebrate = () => {
 
         <button
           onClick={handleReaction}
-          className="reaction-button w-full mb-8 hover:scale-105 transition-transform duration-300 animate-fade-in"
+          className="w-full p-4 mb-8 bg-primary text-white rounded-lg flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all duration-300 animate-fade-in"
         >
-          Send Birthday Love ❤️
+          <Heart className="w-6 h-6" />
+          <span>Send Birthday Love</span>
         </button>
 
-        <div className="message-container animate-fade-in backdrop-blur-sm bg-white/80">
+        <div className="recent-reactions mb-8 space-y-2">
+          {recentReactions.map((message, index) => (
+            <div
+              key={index}
+              className="bg-white p-3 rounded-lg shadow-sm animate-slide-in"
+            >
+              {message}
+            </div>
+          ))}
+        </div>
+
+        <div className="message-container animate-fade-in backdrop-blur-sm bg-white/80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl md:text-3xl mb-4 text-primary font-dancing">
             A Message from Sumit
           </h2>
