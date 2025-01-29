@@ -67,7 +67,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <div className="profile-circle">
         <img
-          src="https://placekitten.com/200/200"
+          src="https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7379.jpeg?alt=media&token=33c12fea-af79-4a99-842a-8ee8c580be01"
           alt="Sukhman"
           className="w-full h-full object-cover"
         />
