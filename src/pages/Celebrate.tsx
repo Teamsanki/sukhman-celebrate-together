@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import * as faceapi from 'face-api.js';
 import { Heart } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Carousel,
   CarouselContent,
@@ -21,14 +22,12 @@ const photos = [
 ];
 
 const reactionMessages = [
-  "Sumit just reacted! ❤️",
-  "Priya sent birthday love! ❤️",
-  "Rahul added a reaction! ❤️",
-  "Neha wishes you! ❤️",
-  "Amit sent love! ❤️"
+  "Someone just reacted! ❤️",
+  "Someone sent birthday love! ❤️",
+  "Someone added a reaction! ❤️",
+  "Someone wishes you! ❤️",
+  "Someone sent love! ❤️"
 ];
-
-const names = ["Sumit", "Priya", "Rahul", "Neha", "Amit", "Riya", "Karan", "Meera"];
 
 const Celebrate = () => {
   const [reactions, setReactions] = useState(100);
@@ -36,6 +35,7 @@ const Celebrate = () => {
   const [recentReactions, setRecentReactions] = useState<string[]>([]);
   const [processedPhotos, setProcessedPhotos] = useState<string[]>([]);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const loadModels = async () => {
@@ -108,8 +108,7 @@ const Celebrate = () => {
 
     // Add random reactions every 3 seconds
     const reactionInterval = setInterval(() => {
-      const randomName = names[Math.floor(Math.random() * names.length)];
-      const newMessage = `${randomName} just sent birthday love! ❤️`;
+      const newMessage = reactionMessages[Math.floor(Math.random() * reactionMessages.length)];
       setRecentReactions(prev => [newMessage, ...prev].slice(0, 5));
       
       setReactions(prev => {
@@ -145,7 +144,7 @@ const Celebrate = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white p-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-6xl text-center text-primary mb-8 animate-fade-in">
+        <h1 className="text-3xl md:text-6xl text-center text-primary mb-8 animate-fade-in">
           Happy Birthday Sukhman! 🎉
         </h1>
 
@@ -164,17 +163,21 @@ const Celebrate = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
+            {!isMobile && (
+              <>
+                <CarouselPrevious className="hidden md:flex" />
+                <CarouselNext className="hidden md:flex" />
+              </>
+            )}
           </Carousel>
         </div>
 
         <div className="flex justify-between mb-8 p-4 bg-white rounded-lg shadow-md animate-fade-in">
-          <div className="text-lg">
+          <div className="text-base md:text-lg">
             <span className="font-bold text-primary">{views}</span>
             <span className="text-gray-600"> Views</span>
           </div>
-          <div className="text-lg">
+          <div className="text-base md:text-lg">
             <span className="font-bold text-primary">{reactions}</span>
             <span className="text-gray-600"> Reactions</span>
           </div>
@@ -182,28 +185,33 @@ const Celebrate = () => {
 
         <button
           onClick={handleReaction}
-          className="w-full p-4 mb-8 bg-primary text-white rounded-lg flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all duration-300 animate-fade-in"
+          className="w-full p-3 md:p-4 mb-8 bg-primary text-white rounded-lg flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all duration-300 animate-fade-in"
         >
-          <Heart className="w-6 h-6" />
-          <span>Send Birthday Love</span>
+          <Heart className="w-5 h-5 md:w-6 md:h-6" />
+          <span className="text-base md:text-lg">Send Birthday Love</span>
         </button>
 
         <div className="recent-reactions mb-8 space-y-2">
           {recentReactions.map((message, index) => (
             <div
               key={index}
-              className="bg-white p-3 rounded-lg shadow-sm animate-slide-in"
+              className="bg-white p-3 rounded-lg shadow-sm animate-[slideUp_0.3s_ease-out] transform transition-all hover:scale-102"
+              style={{
+                animation: `slideUp 0.3s ease-out ${index * 0.1}s`,
+                opacity: 0,
+                animationFillMode: 'forwards'
+              }}
             >
               {message}
             </div>
           ))}
         </div>
 
-        <div className="message-container animate-fade-in backdrop-blur-sm bg-white/80 p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl md:text-3xl mb-4 text-primary">
+        <div className="message-container animate-fade-in backdrop-blur-sm bg-white/80 p-4 md:p-6 rounded-lg shadow-lg">
+          <h2 className="text-xl md:text-3xl mb-4 text-primary">
             A Message from Sumit
           </h2>
-          <p className="text-lg leading-relaxed text-gray-700">
+          <p className="text-base md:text-lg leading-relaxed text-gray-700">
             Dear Sukhman, my best friend! 🌟
             <br /><br />
             On your special day, I want to tell you how grateful I am to have you in my life.
