@@ -46,16 +46,28 @@
 }
 
 .photo-slider {
-  @apply relative w-full h-64 md:h-96 overflow-hidden rounded-lg shadow-xl;
+  @apply relative w-full overflow-hidden rounded-lg shadow-xl;
+  height: min(60vh, 500px);
 }
 
 .reaction-button {
-  @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-300;
+  @apply px-6 py-3 rounded-full text-white font-medium transition-all duration-300;
   background: linear-gradient(45deg, #ff69b4, #9c27b0);
   box-shadow: 0 2px 8px rgba(255, 105, 180, 0.2);
 }
 
 .message-container {
-  @apply p-6 rounded-lg bg-white shadow-lg;
-  border: 2px solid #ff69b4;
+  @apply p-8 rounded-2xl bg-white/90 shadow-xl border-2 border-primary/20 backdrop-blur;
+  animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

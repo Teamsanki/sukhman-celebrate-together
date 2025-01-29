@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const photos = [
   'https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sukhman%2FIMG_7379.jpeg?alt=media&token=33c12fea-af79-4a99-842a-8ee8c580be01',
@@ -12,15 +19,10 @@ const photos = [
 ];
 
 const Celebrate = () => {
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [reactions, setReactions] = useState(100);
   const [views, setViews] = useState(200);
 
   useEffect(() => {
-    const photoInterval = setInterval(() => {
-      setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
-    }, 3000);
-
     const reactionInterval = setInterval(() => {
       setReactions((prev) => prev + 20);
     }, 180000); // 3 minutes
@@ -30,7 +32,6 @@ const Celebrate = () => {
     }, 120000); // 2 minutes
 
     return () => {
-      clearInterval(photoInterval);
       clearInterval(reactionInterval);
       clearInterval(viewInterval);
     };
@@ -42,41 +43,55 @@ const Celebrate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white p-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-6xl text-center text-primary mb-8">
+        <h1 className="text-4xl md:text-6xl text-center text-primary mb-8 animate-fade-in">
           Happy Birthday Sukhman! 🎉
         </h1>
 
-        <div className="photo-slider mb-8">
-          <img
-            src={photos[currentPhotoIndex]}
-            alt={`Celebration ${currentPhotoIndex + 1}`}
-            className="w-full h-full object-cover animate-fade-in"
-          />
+        <div className="mb-12">
+          <Carousel className="w-full max-w-4xl mx-auto">
+            <CarouselContent>
+              {photos.map((photo, index) => (
+                <CarouselItem key={index}>
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
+                    <img
+                      src={photo}
+                      alt={`Celebration ${index + 1}`}
+                      className="w-full h-full object-cover transition-opacity duration-500 animate-fade-in"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+          </Carousel>
         </div>
 
-        <div className="flex justify-between mb-8">
+        <div className="flex justify-between mb-8 p-4 bg-white rounded-lg shadow-md animate-fade-in">
           <div className="text-lg">
-            <span className="font-bold">{views}</span> Views
+            <span className="font-bold text-primary">{views}</span>
+            <span className="text-gray-600"> Views</span>
           </div>
           <div className="text-lg">
-            <span className="font-bold">{reactions}</span> Reactions
+            <span className="font-bold text-primary">{reactions}</span>
+            <span className="text-gray-600"> Reactions</span>
           </div>
         </div>
 
         <button
           onClick={handleReaction}
-          className="reaction-button w-full mb-8"
+          className="reaction-button w-full mb-8 hover:scale-105 transition-transform duration-300 animate-fade-in"
         >
           Send Birthday Love ❤️
         </button>
 
-        <div className="message-container">
-          <h2 className="text-2xl md:text-3xl mb-4 text-primary">
+        <div className="message-container animate-fade-in backdrop-blur-sm bg-white/80">
+          <h2 className="text-2xl md:text-3xl mb-4 text-primary font-dancing">
             A Message from Sumit
           </h2>
-          <p className="text-lg leading-relaxed">
+          <p className="text-lg leading-relaxed text-gray-700">
             Dear Sukhman, my best friend! 🌟
             <br /><br />
             On your special day, I want to tell you how grateful I am to have you in my life.
