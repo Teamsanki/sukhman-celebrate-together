@@ -7,7 +7,7 @@ const Index = () => {
   const [showCelebrate, setShowCelebrate] = useState(false);
   const [audioPlayed, setAudioPlayed] = useState(false);
   const navigate = useNavigate();
-  const targetDate = new Date('2025-02-01T00:00:00');
+  const targetDate = new Date('2024-02-01T00:00:00');
   const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
 
   useEffect(() => {
